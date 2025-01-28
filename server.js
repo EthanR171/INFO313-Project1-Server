@@ -9,6 +9,15 @@ try {
   if (process.argv[2] == '-r' || process.argv[2] == '--refresh') {
     await setup.refreshDatabase(client, vars);
   }
+
+  let criteria = { email: { $regex: 'abc' } };
+  let allEmailsWithABC = await db.findDocuments(
+    client,
+    vars.DB_NAME,
+    'users',
+    criteria
+  );
+  console.log(allEmailsWithABC);
 } catch (e) {
   console.error(`${e}`);
 } finally {
