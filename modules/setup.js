@@ -13,11 +13,20 @@ const downloadData = async (vars) => {
 };
 
 const refreshDatabase = async (client, vars) => {
-  const { DB_NAME, DATA_DIRECTORY, USERS_JSON_FILENAME } = vars;
+  const {
+    DB_NAME,
+    DATA_DIRECTORY,
+    USERS_JSON_FILENAME,
+    ISO_COUNTRIES_JSON_FILENAME,
+    ADVISORY_JSON_FILENAME,
+  } = vars;
 
   await downloadData(vars);
 
   let users = await loadUsers(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
+  let isoCountries = await loadISOData(
+    `${DATA_DIRECTORY}/${ISO_COUNTRIES_JSON_FILENAME}`
+  );
   // implement the other fucntions below (loadISOData, loadAdvisories, mergeData)
 
   // UNCOMMENT THE BELOW WHEN DONE DEBUGGING
