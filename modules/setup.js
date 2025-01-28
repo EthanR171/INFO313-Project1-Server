@@ -23,7 +23,6 @@ const refreshDatabase = async (client, vars) => {
 
   await downloadData(vars);
 
-  // implement the other fucntions below (loadISOData, loadAdvisories, mergeData)
   let users = await loadUsers(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
   let isoData = await loadISOData(
     `${DATA_DIRECTORY}/${ISO_COUNTRIES_JSON_FILENAME}`
@@ -32,10 +31,40 @@ const refreshDatabase = async (client, vars) => {
     `${DATA_DIRECTORY}/${ADVISORY_JSON_FILENAME}`
   );
 
-  // UNCOMMENT THE BELOW WHEN DONE DEBUGGING
-  //   await db.deleteDatabase(client, DB_NAME);
-  //   await db.insertDocuments(client, DB_NAME, 'users', users);
-  //   console.warn(`${users.length} users added to ${DB_NAME}.users`);
+  let mergedData = mergeData(isoData, advisories);
+
+  await db.deleteDatabase(client, DB_NAME);
+  await db.insertDocuments(client, DB_NAME, 'users', users);
+  console.warn(`${users.length} users added to ${DB_NAME}.users`);
+  await db.insertDocuments(client, DB_NAME, 'alerts', mergedData);
+  console.warn(`${mergedData.length} alerts added to ${DB_NAME}.alerts`);
+};
+
+const mergeData = (isoCountries, advisories) => {
+  let countries = isoCountries.map((isoCountry) => {
+    const { name, region } = isoCountry;
+    const code = isoCountry['alpha-2'];
+    const sub_region = isoCountry['sub-region'];
+
+    let advisoryEntry = advisories[code]; // Check for a match for the "left-join"
+    const date = advisoryEntry
+      ? advisories[code]['date-published']['date']
+      : '';
+    const advisory = advisoryEntry
+      ? advisories[code]['eng']['advisory-text']
+      : '';
+
+    return {
+      country_name: name,
+      country_code: code,
+      region,
+      sub_region,
+      advisory,
+      date,
+    }; // return of map, not of processData
+  });
+
+  return countries;
 };
 
 const loadUsers = async (filePath) => {
