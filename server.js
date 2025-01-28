@@ -1,4 +1,14 @@
 import vars from './modules/vars.js';
-const { DB_CLUSTER } = vars;
+import * as db from './modules/db.js';
+import * as setup from './modules/setup.js';
 
-console.log(`DB_CLUSTER: ${DB_CLUSTER}`);
+let client = null;
+
+try {
+  client = await db.initDatabase(vars);
+  await setup.refreshDatabase(client, vars);
+} catch (e) {
+  console.error(`${e}`);
+} finally {
+  await client?.close();
+}
