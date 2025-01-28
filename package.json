@@ -1,0 +1,15 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Sever",
+  "main": "server.js",
+  "scripts": {
+    "server": "node server.js"
+  },
+  "author": "Ethan Rivers",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  }
+}
