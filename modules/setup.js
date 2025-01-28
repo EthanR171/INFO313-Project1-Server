@@ -23,11 +23,14 @@ const refreshDatabase = async (client, vars) => {
 
   await downloadData(vars);
 
+  // implement the other fucntions below (loadISOData, loadAdvisories, mergeData)
   let users = await loadUsers(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
-  let isoCountries = await loadISOData(
+  let isoData = await loadISOData(
     `${DATA_DIRECTORY}/${ISO_COUNTRIES_JSON_FILENAME}`
   );
-  // implement the other fucntions below (loadISOData, loadAdvisories, mergeData)
+  let advisories = await loadAdvisories(
+    `${DATA_DIRECTORY}/${ADVISORY_JSON_FILENAME}`
+  );
 
   // UNCOMMENT THE BELOW WHEN DONE DEBUGGING
   //   await db.deleteDatabase(client, DB_NAME);
