@@ -6,7 +6,9 @@ let client = null;
 
 try {
   client = await db.initDatabase(vars);
-  await setup.refreshDatabase(client, vars);
+  if (process.argv[2] == '-r' || process.argv[2] == '--refresh') {
+    await setup.refreshDatabase(client, vars);
+  }
 } catch (e) {
   console.error(`${e}`);
 } finally {
