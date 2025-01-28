@@ -40,6 +40,33 @@ const deleteDatabase = (client, database) => {
   return client.db(database).dropDatabase();
 };
 
+const findDocument = (
+  client,
+  database,
+  collection,
+  criteria,
+  projection = { _id: 0 }
+) => {
+  return client
+    .db(database)
+    .collection(collection)
+    .findOne(criteria, { projection });
+};
+
+const findDocuments = (
+  client,
+  database,
+  collection,
+  criteria,
+  projection = { _id: 0 }
+) => {
+  return client
+    .db(database)
+    .collection(collection)
+    .find(criteria, { projection })
+    .toArray();
+};
+
 export {
   initDatabase,
   insertDocument,
@@ -47,4 +74,6 @@ export {
   deleteDocument,
   deleteCollection,
   deleteDatabase,
+  findDocument,
+  findDocuments,
 };
