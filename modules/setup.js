@@ -17,13 +17,38 @@ const refreshDatabase = async (client, vars) => {
 
   await downloadData(vars);
 
-  let usersFile = await fs.readFile(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
-  let usersText = await usersFile.toString();
-  let users = await JSON.parse(usersText);
+  let users = await loadUsers(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
 
   await db.deleteDatabase(client, DB_NAME);
   await db.insertDocuments(client, DB_NAME, 'users', users);
   console.warn(`${users.length} users added to ${DB_NAME}.users`);
+};
+
+const loadUsers = async (filePath) => {
+  let usersFile = await fs.readFile(filePath);
+  let usersText = await usersFile.toString();
+  let users = await JSON.parse(usersText);
+  console.warn(`${users.length} user(s) read from ${filePath}`);
+  return users;
+};
+
+const loadISOData = async (filePath) => {
+  let isoFile = await fs.readFile(filePath);
+  let isoText = await isoFile.toString();
+  let isoCountries = await JSON.parse(isoText);
+  console.warn(`${isoCountries.length} ISO countries read from ${filePath}`);
+  return isoCountries;
+};
+
+const loadAdvisories = async (filePath) => {
+  let advisoriesFile = await fs.readFile(filePath);
+  let advisoriesText = await advisoriesFile.toString();
+  let advisoriesObject = await JSON.parse(advisoriesText);
+  let advisories = advisoriesObject['data'];
+  console.warn(
+    `${Object.keys(advisories).length} advisories read from ${filePath}`
+  );
+  return advisories;
 };
 
 export { downloadData, refreshDatabase };
