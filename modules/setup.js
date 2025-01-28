@@ -18,10 +18,12 @@ const refreshDatabase = async (client, vars) => {
   await downloadData(vars);
 
   let users = await loadUsers(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
+  // implement the other fucntions below (loadISOData, loadAdvisories, mergeData)
 
-  await db.deleteDatabase(client, DB_NAME);
-  await db.insertDocuments(client, DB_NAME, 'users', users);
-  console.warn(`${users.length} users added to ${DB_NAME}.users`);
+  // UNCOMMENT THE BELOW WHEN DONE DEBUGGING
+  //   await db.deleteDatabase(client, DB_NAME);
+  //   await db.insertDocuments(client, DB_NAME, 'users', users);
+  //   console.warn(`${users.length} users added to ${DB_NAME}.users`);
 };
 
 const loadUsers = async (filePath) => {
