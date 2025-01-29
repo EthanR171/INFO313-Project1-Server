@@ -57,7 +57,7 @@ try {
         vars.DB_NAME,
         collection,
         criteria,
-        format // projection to exclude _id and email fields
+        format
       );
       console.log(queryResults);
       break;
