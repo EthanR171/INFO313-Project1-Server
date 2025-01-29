@@ -5,19 +5,63 @@ import * as setup from './modules/setup.js';
 let client = null;
 
 try {
-  client = await db.initDatabase(vars);
-  if (process.argv[2] == '-r' || process.argv[2] == '--refresh') {
-    await setup.refreshDatabase(client, vars);
+  if (process.argv.length > 6) {
+    console.error(`Error: Too many arguments '${process.argv[6]}'`);
+    console.error(
+      'Usage: node server.js -f <collection> <field> <value-match>'
+    );
+    process.exit(1);
   }
 
-  let criteria = { email: { $regex: 'abc' } };
-  let allEmailsWithABC = await db.findDocuments(
-    client,
-    vars.DB_NAME,
-    'users',
-    criteria
-  );
-  console.log(allEmailsWithABC);
+  client = await db.initDatabase(vars);
+
+  // variables to handle command line arguments
+  let collection, field, valueMatch, criteria, format, queryResults;
+
+  switch (process.argv[2]) {
+    case '-r':
+      await setup.refreshDatabase(client, vars);
+      break;
+    case '--refresh':
+      await setup.refreshDatabase(client, vars);
+      break;
+    case '-f':
+    case '--find':
+      if (process.argv.length < 6) {
+        console.error('Error: Not enough arguments');
+        console.error(
+          'Usage: node server.js -f <collection> <field> <value-match>'
+        );
+        process.exit(1);
+      }
+      // logic to find documents
+      collection = process.argv[3];
+      field = process.argv[4];
+      valueMatch = process.argv[5];
+      criteria = { [field]: { $regex: valueMatch } };
+
+      // figure out format based on collection
+      switch (collection) {
+        case 'users':
+          format = { _id: 0, name: 1 }; // only show name
+          break;
+        case 'alerts':
+          format = { _id: 0, country_name: 1 }; // only show country_name
+          break;
+        default:
+          format = { _id: 0 };
+      }
+
+      queryResults = await db.findDocuments(
+        client,
+        vars.DB_NAME,
+        collection,
+        criteria,
+        format // projection to exclude _id and email fields
+      );
+      console.log(queryResults);
+      break;
+  }
 } catch (e) {
   console.error(`${e}`);
 } finally {
