@@ -13,7 +13,7 @@ const configure = (client, vars) => {
       let criteria = {}; // this will hold the formated contents of the request query strings if any are given
       for (let [key, value] of Object.entries(request.query)) {
         criteria[key] = {
-          $regex: value,
+          $regex: value, // will not give us an exact mach so "Foo" input would still find "Foo Bar"
           $options: 'i', // ingore case
         };
       }
