@@ -35,10 +35,11 @@ const updateDocument = async (
   criteria,
   document
 ) => {
-  return client
-    .db(database)
-    .collection(collection)
-    .updateOne(criteria, { $set: document });
+  return client.db(database).collection(collection).findOneAndUpdate(
+    criteria,
+    { $set: document }, // always use $set for partial updates otherwise all other fields may be removed
+    { returnDocument: 'after' } // return the updated document
+  );
 };
 
 const deleteDocument = (client, database, collection, document) => {
