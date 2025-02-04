@@ -1,69 +1,13 @@
 import vars from './modules/vars.js';
 import * as db from './modules/db.js';
-import * as setup from './modules/setup.js';
-
-let client = null;
+import * as cli from './modules/cli.js';
+import * as api from './modules/api.js';
 
 try {
-  if (process.argv.length > 6) {
-    console.error(`Error: Too many arguments '${process.argv[6]}'`);
-    console.error(
-      'Usage: node server.js -f <collection> <field> <value-match>'
-    );
-    process.exit(1);
-  }
-
-  client = await db.initDatabase(vars);
-
-  // variables to handle command line arguments
-  let collection, field, valueMatch, criteria, format, queryResults;
-
-  switch (process.argv[2]) {
-    case '-r':
-      await setup.refreshDatabase(client, vars);
-      break;
-    case '--refresh':
-      await setup.refreshDatabase(client, vars);
-      break;
-    case '-f':
-    case '--find':
-      if (process.argv.length < 6) {
-        console.error('Error: Not enough arguments');
-        console.error(
-          'Usage: node server.js -f <collection> <field> <value-match>'
-        );
-        process.exit(1);
-      }
-      // logic to find documents
-      collection = process.argv[3];
-      field = process.argv[4];
-      valueMatch = process.argv[5];
-      criteria = { [field]: { $regex: valueMatch } };
-
-      // figure out format based on collection
-      switch (collection) {
-        case 'users':
-          format = { _id: 0, name: 1 }; // only show name
-          break;
-        case 'alerts':
-          format = { _id: 0, country_name: 1 }; // only show country_name
-          break;
-        default:
-          format = { _id: 0 };
-      }
-
-      queryResults = await db.findDocuments(
-        client,
-        vars.DB_NAME,
-        collection,
-        criteria,
-        format
-      );
-      console.log(queryResults);
-      break;
-  }
+  let client = await db.initDatabase(vars);
+  await cli.processArgs(client, vars); // if any valid arguments are passed process will exit after this line
+  api.configure(client, vars);
+  api.startServer(vars.PORT);
 } catch (e) {
   console.error(`${e}`);
-} finally {
-  await client?.close();
 }

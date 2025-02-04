@@ -12,6 +12,7 @@ const {
   ADVISORY_JSON_FILENAME,
   ISO_COUNTRIES_JSON_FILENAME,
   USERS_JSON_FILENAME,
+  PORT,
 } = process.env;
 
 export default {
@@ -25,4 +26,5 @@ export default {
   ADVISORY_JSON_FILENAME,
   ISO_COUNTRIES_JSON_FILENAME,
   USERS_JSON_FILENAME,
+  PORT,
 };
