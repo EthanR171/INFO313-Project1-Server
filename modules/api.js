@@ -17,10 +17,9 @@ const configure = (client, vars) => {
           $options: 'i', // ingore case
         };
       }
-
-      console.log(criteria);
-
+      //console.log(criteria);
       let result = await db.findDocuments(client, DB_NAME, 'users', criteria);
+      //console.log(result);
       response.status(200).send(result);
     } catch (e) {
       console.error(e); // print on the server
@@ -39,6 +38,23 @@ const configure = (client, vars) => {
       response.status(200).send(result);
     } catch (e) {
       console.error(e);
+      response.status(500).send(`${e}`);
+    }
+  });
+
+  // update user by email
+  app.put('/api/users/:email', async (request, response) => {
+    try {
+      let result = await db.updateDocument(
+        client,
+        DB_NAME,
+        'users',
+        { email: request.params.email }, // critera to filter the document to update with an exact match on email
+        request.body // update document with the new fields
+      );
+
+      response.status(200).send(result);
+    } catch (e) {
       response.status(500).send(`${e}`);
     }
   });

@@ -28,6 +28,19 @@ const insertDocuments = (client, database, collection, documentArray) => {
   return client.db(database).collection(collection).insertMany(documentArray);
 };
 
+const updateDocument = async (
+  client,
+  database,
+  collection,
+  criteria,
+  document
+) => {
+  return client
+    .db(database)
+    .collection(collection)
+    .updateOne(criteria, { $set: document });
+};
+
 const deleteDocument = (client, database, collection, document) => {
   return client.db(database).collection(collection).deleteOne(document);
 };
@@ -71,6 +84,7 @@ export {
   initDatabase,
   insertDocument,
   insertDocuments,
+  updateDocument,
   deleteDocument,
   deleteCollection,
   deleteDatabase,
