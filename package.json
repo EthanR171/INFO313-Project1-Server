@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "server": "node server.js",
-    "refresh": "node server.js --refresh"
+    "refresh": "node server.js --refresh",
+    "watch": "node --watch server.js"
   },
   "author": "Ethan Rivers",
   "license": "ISC",
