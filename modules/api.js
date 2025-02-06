@@ -3,6 +3,7 @@ import express, { request } from 'express';
 
 const app = express();
 app.use(express.json()); // middleware to parse JSON bodies (allows us to use request.body)
+app.use(express.static('public')); // configure express to host the public folder (contains client side code)
 
 const configure = (client, vars) => {
   const { DB_NAME } = vars;
