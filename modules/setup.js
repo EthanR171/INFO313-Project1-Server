@@ -13,27 +13,21 @@ const downloadData = async (vars) => {
 };
 
 const refreshDatabase = async (client, vars) => {
-  const {
-    DB_NAME,
-    DATA_DIRECTORY,
-    USERS_JSON_FILENAME,
-    ISO_COUNTRIES_JSON_FILENAME,
-    ADVISORY_JSON_FILENAME,
-  } = vars;
+  const { DB_NAME, DATA_DIRECTORY, USERS_JSON_FILENAME, ISO_COUNTRIES_JSON_FILENAME, ADVISORY_JSON_FILENAME } = vars;
 
   await downloadData(vars);
 
   let users = await loadUsers(`${DATA_DIRECTORY}/${USERS_JSON_FILENAME}`);
-  let isoData = await loadISOData(
-    `${DATA_DIRECTORY}/${ISO_COUNTRIES_JSON_FILENAME}`
-  );
-  let advisories = await loadAdvisories(
-    `${DATA_DIRECTORY}/${ADVISORY_JSON_FILENAME}`
-  );
+  let isoData = await loadISOData(`${DATA_DIRECTORY}/${ISO_COUNTRIES_JSON_FILENAME}`);
+  let advisories = await loadAdvisories(`${DATA_DIRECTORY}/${ADVISORY_JSON_FILENAME}`);
 
   let mergedData = mergeData(isoData, advisories);
 
-  await db.deleteDatabase(client, DB_NAME);
+  // comment out the delete and just delete the two collections then insert the refreshed data.
+  //await db.deleteDatabase(client, DB_NAME);
+
+  await db.deleteCollection(client, DB_NAME, 'users');
+  await db.deleteCollection(client, DB_NAME, 'alerts');
   await db.insertDocuments(client, DB_NAME, 'users', users);
   console.warn(`${users.length} users added to ${DB_NAME}.users`);
   await db.insertDocuments(client, DB_NAME, 'alerts', mergedData);
@@ -47,12 +41,8 @@ const mergeData = (isoCountries, advisories) => {
     const sub_region = isoCountry['sub-region'];
 
     let advisoryEntry = advisories[code]; // Check for a match for the "left-join"
-    const date = advisoryEntry
-      ? advisories[code]['date-published']['date']
-      : '';
-    const advisory = advisoryEntry
-      ? advisories[code]['eng']['advisory-text']
-      : '';
+    const date = advisoryEntry ? advisories[code]['date-published']['date'] : '';
+    const advisory = advisoryEntry ? advisories[code]['eng']['advisory-text'] : '';
 
     return {
       country_name: name,
@@ -88,9 +78,7 @@ const loadAdvisories = async (filePath) => {
   let advisoriesText = await advisoriesFile.toString();
   let advisoriesObject = await JSON.parse(advisoriesText);
   let advisories = advisoriesObject['data'];
-  console.warn(
-    `${Object.keys(advisories).length} advisories read from ${filePath}`
-  );
+  console.warn(`${Object.keys(advisories).length} advisories read from ${filePath}`);
   return advisories;
 };
 
