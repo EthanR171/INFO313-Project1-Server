@@ -1,4 +1,5 @@
 import * as db from './db.js';
+import * as setup from './setup.js';
 import express, { request } from 'express';
 import cors from 'cors';
 
@@ -80,6 +81,17 @@ const configure = (client, vars) => {
     } catch (e) {
       console.error(e);
       response.status(500).send(`${e}`);
+    }
+  });
+
+  // refresh database endpoint
+  app.post('/api/refresh', async (request, response) => {
+    try {
+      await setup.refreshDatabase(client, vars);
+      response.status(200).json({ message: 'Database refreshed' });
+    } catch (e) {
+      console.error(e);
+      response.status(500).json({ error: e.toString() });
     }
   });
 };
