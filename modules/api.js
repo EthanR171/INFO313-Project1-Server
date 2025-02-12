@@ -1,9 +1,20 @@
 import * as db from './db.js';
 import express, { request } from 'express';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json()); // middleware to parse JSON bodies (allows us to use request.body)
+app.use(cors()); // middleware to enable CORS (Cross-Origin Resource Sharing) for requests
 app.use(express.static('public')); // configure express to host the public folder (contains client side code)
+
+app.use((req, _res, next) => {
+  const timestamp = new Date(Date.now());
+  console.log(`[${timestamp.toDateString()} ${timestamp.toTimeString()}] / ${timestamp.toISOString()}`);
+  console.log(req.method, req.hostname, req.path);
+  console.log('headers:', req.headers);
+  console.log('body:', req.body);
+  next();
+});
 
 const configure = (client, vars) => {
   const { DB_NAME } = vars;
@@ -30,12 +41,7 @@ const configure = (client, vars) => {
 
   app.post('/api/users', async (request, response) => {
     try {
-      let result = await db.insertDocument(
-        client,
-        DB_NAME,
-        'users',
-        request.body
-      );
+      let result = await db.insertDocument(client, DB_NAME, 'users', request.body);
       response.status(200).send(result);
     } catch (e) {
       console.error(e);
@@ -78,7 +84,6 @@ const configure = (client, vars) => {
   });
 };
 
-const startServer = (PORT) =>
-  app.listen(PORT, console.warn(`Listening on port ${PORT}`));
+const startServer = (PORT) => app.listen(PORT, console.warn(`Listening on port ${PORT}`));
 
 export { configure, startServer };
