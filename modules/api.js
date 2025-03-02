@@ -127,13 +127,9 @@ const configure = (client, vars) => {
 
   // BOOKMARK ENDPOINTS
 
-  // get all bookmarked countires (not in full detail)
+  // get all bookmarked countires (gives us the entire object minus the _id field)
   app.get('/api/bookmarks', async (_request, response) => {
-    let projection = {
-      _id: 0,
-      country_code: 1,
-      country_name: 1,
-    };
+    let projection = { _id: 0 };
     try {
       let result = await db.findDocuments(client, DB_NAME, 'bookmarks', {}, projection);
       response.send(result);
