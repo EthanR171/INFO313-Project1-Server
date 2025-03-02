@@ -28,6 +28,7 @@ const refreshDatabase = async (client, vars) => {
 
   await db.deleteCollection(client, DB_NAME, 'users');
   await db.deleteCollection(client, DB_NAME, 'alerts');
+  await db.deleteCollection(client, DB_NAME, 'bookmarks'); // added to delete bookmarks collection on refresh
   await db.insertDocuments(client, DB_NAME, 'users', users);
   console.warn(`${users.length} users added to ${DB_NAME}.users`);
   await db.insertDocuments(client, DB_NAME, 'alerts', mergedData);
