@@ -94,6 +94,36 @@ const configure = (client, vars) => {
       response.status(500).json({ error: e.toString() });
     }
   });
+
+  // TRAVEL ADVISORY ENDPOINTS
+  app.get('/api/alerts', async (_request, response) => {
+    let projection = {
+      _id: 0,
+      country_code: 1,
+      country_name: 1,
+    };
+
+    try {
+      let result = await db.findDocuments(client, DB_NAME, 'alerts', {}, projection);
+      response.send(result);
+    } catch (e) {
+      console.error(e);
+      console.log(`${e}`);
+      response.status(500).send([]);
+    }
+  });
+
+  app.get('/api/alerts/:country_code', async (request, response) => {
+    const { country_code } = request.params;
+    try {
+      let result = await db.findDocument(client, DB_NAME, 'alerts', { country_code });
+      response.send(result);
+    } catch (e) {
+      console.error(e);
+      console.log(`${e}`);
+      response.status(500).send([]);
+    }
+  });
 };
 
 const startServer = (PORT) => app.listen(PORT, console.warn(`Listening on port ${PORT}`));
