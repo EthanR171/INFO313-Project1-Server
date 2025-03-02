@@ -124,6 +124,16 @@ const configure = (client, vars) => {
       response.status(500).send([]);
     }
   });
+
+  // Handles Client-Side Routing Requests
+  // Any request that doesn't match an API endpoint above will be served the index.html file
+  // At this point in the code, we know the request is not an API request
+  app.use((_request, response) => response.sendFile('index.html', { root: 'public' }));
+
+  // Application level middleware that will catch all unhandled routes
+  // Must be last in configuration
+  // Like a default switch statement!
+  app.use((request, response) => response.send(`${request.path} didn't match any route`));
 };
 
 const startServer = (PORT) => app.listen(PORT, console.warn(`Listening on port ${PORT}`));
