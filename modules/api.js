@@ -125,6 +125,63 @@ const configure = (client, vars) => {
     }
   });
 
+  // BOOKMARK ENDPOINTS
+
+  // get all bookmarked countires (not in full detail)
+  app.get('/api/bookmarks', async (_request, response) => {
+    let projection = {
+      _id: 0,
+      country_code: 1,
+      country_name: 1,
+    };
+    try {
+      let result = await db.findDocuments(client, DB_NAME, 'bookmarks', {}, projection);
+      response.send(result);
+    } catch (e) {
+      console.error(e);
+      console.log(`${e}`);
+      response.status(500).send([]);
+    }
+  });
+
+  // gets full details of a bookmarked country
+  app.get('/api/bookmarks/:country_code', async (request, response) => {
+    const { country_code } = request.params;
+    try {
+      let result = await db.findDocument(client, DB_NAME, 'bookmarks', { country_code });
+      response.send(result);
+    } catch (e) {
+      console.error(e);
+      console.log(`${e}`);
+      response.status(500).send([]);
+    }
+  });
+
+  app.post('/api/bookmarks', async (request, response) => {
+    try {
+      let result = await db.insertDocument(client, DB_NAME, 'bookmarks', request.body);
+      response.status(200).send(result);
+    } catch (e) {
+      console.error(e);
+      response.status(500).send(`${e}`);
+    }
+  });
+
+  app.delete('/api/bookmarks/:country_code', async (request, response) => {
+    try {
+      let result = await db.deleteDocument(client, DB_NAME, 'bookmarks', {
+        country_code: {
+          $regex: request.params.country_code,
+          $options: 'i',
+        },
+      });
+      response.status(200).send(result);
+    } catch (e) {
+      console.error(e);
+      response.status(500).send(`${e}`);
+    }
+  });
+
   // Handles Client-Side Routing Requests
   // Any request that doesn't match an API endpoint above will be served the index.html file
   // At this point in the code, we know the request is not an API request
