@@ -53,15 +53,28 @@ const configure = (client, vars) => {
   // update user by email
   app.put('/api/users/:email', async (request, response) => {
     try {
+      const oldKey = request.params.email;
+      const updatedUser = request.body;
+
+      // Perform the update
       let result = await db.updateDocument(
         client,
         DB_NAME,
         'users',
-        { email: request.params.email }, // critera to filter the document to update with an exact match on email
-        request.body // update document with the new fields
+        { email: oldKey }, // Filter by old email
+        updatedUser
       );
 
-      response.status(200).send(result);
+      console.log(result);
+
+      if (result) {
+        response.status(200).json({
+          message: `${updatedUser.name} updated`,
+          updatedUser,
+        });
+      } else {
+        response.status(400).json({ error: 'Failed to update User' });
+      }
     } catch (e) {
       response.status(500).send(`${e}`);
     }
