@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html><head><link rel="stylesheet" href="https://s.brightspace.com/lib/fonts/0.6.1/fonts.css"></head><body style="color: rgb(32, 33, 34); font-family: Lato, sans-serif; font-size: 24px;"><h3 style="text-align: center;">[INFO 3139] Case Study 1 Setup</h3>
+<p>In this Lab we'll outline the final requirements for your Project 1, then go through the process of <strong>creating a build of the app</strong> and <strong>deploying it to AWS.</strong></p>
+<hr>
+<h3 style="text-align: center;">Final Requirements</h3>
+<p>Before you build and deploy your app for the Case Study, there's a couple of&nbsp;<strong>final requirements to complete</strong>:</p>
+<h4 style="text-align: center;">New User Creation</h4>
+<p>The following requirements should be added to the existing User Creation feature.</p>
+<ol>
+<li style="text-align: left;"><strong></strong>When a&nbsp;<strong>New User is created</strong>, it should be <strong>added to the Select list</strong> and&nbsp;get <strong>automatically selected</strong></li>
+<li style="text-align: left;">The <strong>name and email fields</strong> should be <strong>validated</strong> to <strong>prevent empty</strong> values and show <strong>"&lt;Field&gt; is required"&nbsp;</strong><strong></strong></li>
+</ol>
+<p><img src="image_20250223213924663.png" width="693" height="593" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p style="text-align: center;"><strong>User Update</strong><strong></strong></p>
+<p>You should implement the ability to <strong>update an existing user</strong> with the following requirements:</p>
+<ol>
+<li>The <strong>update button should be disabled</strong> when there are <strong>no changes </strong>to the current version of the user</li>
+<li>When the <strong>user is updated</strong>, the name in the <strong>Select&nbsp;</strong>selected option <strong>should automatically updated</strong></li>
+<li style="text-align: left;">The <strong>name and email fields</strong> should be <strong>validated</strong> to <strong>prevent empty</strong> values and show <strong>"&lt;Field&gt; is required"&nbsp;</strong><strong></strong></li>
+</ol>
+<p><strong><img src="image_20250223213924821.png" width="682" height="583" style="display: block; margin-left: auto; margin-right: auto;"></strong></p>
+<p>Some <strong>implementation help</strong> for the <strong>validation</strong>:</p>
+<ul>
+<li>You can use the&nbsp;<a href="https://mui.com/material-ui/react-text-field/#helper-text" target="_blank" rel="noopener">helperText property</a> of the <code><strong><a href="https://mui.com/material-ui/react-text-field" target="_blank" rel="noopener">&lt;TextField&gt;</a></strong></code> component to set the text</li>
+<li>And the <a href="https://mui.com/material-ui/react-text-field/#validation" target="_blank" rel="noopener">error property</a> to control the color</li>
+</ul>
+<p>Some <strong>implementation help</strong> for the <strong>automatic selection</strong>:</p>
+<ul>
+<li>To add the new user to the array of users, <strong>you'll need a new array</strong> for React to recognize changes</li>
+<li>You can use the <strong>spread operator</strong> to add a new item using <code><strong>[...oldArray, newItem]</strong></code></li>
+<li>You trust and <strong>use the local data for the user</strong> instead of having to load the users again</li>
+</ul>
+<hr>
+<h3 style="text-align: center;"><strong>Build the Client</strong></h3>
+<p style="text-align: left;">Add the following script to the client's&nbsp;<code><strong>package.json</strong></code> to automate the process of copying build files.</p>
+<p style="text-align: left;">This will only work if your <strong>server's static file directory</strong> is called <code><strong>public/</strong></code> and your <strong>project structure</strong> matches:</p>
+<p style="text-align: left;">-- <strong>&lt;your-project-1-folder&gt;/</strong><br>-- -- <code><strong>server/</strong></code><br>-- -- <code><strong>client/</strong></code></p>
+<p style="text-align: left;">You can modify the following script to match your project.</p>
+<pre class="line-numbers d2l-code"><code class="language-javascript">  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "build-and-copy": "vite build &amp; xcopy /hiev dist\\* ..\\server\\public\\ /Y"
+  },</code></pre>
+<p>You can use it to&nbsp;<strong>build and automatically copy</strong> to <strong><code>server/public/</code> </strong>folder</p>
+<p><img src="image_20250224070218403.png" data-d2l-editor-default-img-style="true" style="max-width: 100%;"></p>
+<p>If the script doesn't work, or if you just want to make sure it's a clean build, build the client, then delete the files inside&nbsp;<code><strong>server/public/</strong></code> and copy the contents of <code><strong>dist/</strong></code> manually into the <code><strong>server/public/</strong></code> folder like <strong>Lab 9</strong>.</p>
+<hr>
+<h3 style="text-align: center;">Zipping the App</h3>
+<p>Once the <strong>client is built and copied</strong> into the <code><strong>public/</strong></code> folder of the <code><strong>server/</strong></code>, <strong>hold Ctrl</strong> then <strong>click to select</strong> the following <strong>folders and files</strong> from your <code><strong>server/</strong></code> project:</p>
+<ul>
+<li style="font-weight: bold;"><code><strong>data/</strong></code></li>
+<li style="font-weight: bold;"><code><strong>modules/</strong></code></li>
+<li style="font-weight: bold;"><code><strong>public/</strong></code></li>
+<li style="font-weight: bold;"><code><strong>package.json</strong></code></li>
+<li style="font-weight: bold;"><code><strong>server.js</strong></code></li>
+</ul>
+<p>Then <strong>Right-click</strong> server.js &gt;&nbsp;<strong>Sent to</strong> &gt; <strong>Compressed (zipped) folder.</strong></p>
+<p><img src="image_20250223222100170.png" data-d2l-editor-default-img-style="true" style="max-width: 100%; display: block; margin-left: auto; margin-right: auto;"></p>
+<hr>
+<h3 style="text-align: center;">Verifying Database Access</h3>
+<p>Next, ensure that your&nbsp;<strong>Atlas Cluster</strong> can be <strong>accessed from anywhere</strong> (<strong>0.0.0.0/0</strong>) added to the <strong>IP Address list</strong>.</p>
+<p><img src="image_20250224063220729.png" width="949" height="483" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<hr>
+<h3 style="text-align: center;">AWS Deployment</h3>
+<p>Go to&nbsp;<a href="https://awsacademy.instructure.com/courses/112256">https://awsacademy.instructure.com/courses/112256</a> and login through <strong>Student Login</strong></p>
+<p style="text-align: center;">If you need to <strong>register</strong>, <strong>check your FOL inbox for the invite</strong></p>
+<p><img src="image_20250224063220896.png" width="819" height="419" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Go to <strong>Modules</strong> and scroll down until you find <strong>Launch AWS Academy Learner Lab</strong></p>
+<p><img src="image_20250224063221088.png" width="823" height="423" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Then click <strong>LMS.</strong></p>
+<p><img src="image_20250224053739694.png" width="829" height="180" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Click <strong>Start Lab</strong> and wait until <strong>AWS turns green</strong>. Once it's green, click it.</p>
+<p><img src="image_20250223224517973.png" width="821" height="420" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Search for <strong>Elastic Beanstalk</strong> and select that service from the search results</p>
+<p><img src="image_20250218164100831.png" width="736" height="256" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Select <strong>Create Application</strong></p>
+<p><img src="image_20250218164948836.png" width="732" height="292" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Select <strong>Web server environment</strong> and set an <strong>application name</strong> and&nbsp;<strong>environment name</strong>.</p>
+<p><img src="image_20250218164948928.png" width="704" height="376" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Select <strong>Managed platform</strong>, then <strong>select Node.js</strong> and leave the default values.</p>
+<p><img src="image_20250218164949080.png" width="629" height="350" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Then select <strong>Upload your code</strong>, <strong>set a version label</strong>, select <strong>Local file</strong> and <strong>upload your server zip</strong>.</p>
+<p><img src="image_20250224063221226.png" width="651" height="487" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Scroll down, then select <strong>NEXT</strong>.</p>
+<p>Choose "<strong>Use an existing service role</strong>" and select <strong>LabRole</strong>, <strong>vockey</strong>, and <strong>LabInstanceProfile</strong>.</p>
+<p><img src="image_20250224063221348.png" width="864" height="449" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Then click <strong>Skip to review</strong>.</p>
+<p>Scroll down to <strong>Step 5: Configure updates, monitoring and logging</strong> and click <strong>Edit</strong></p>
+<p><img src="image_20250224070218601.png" data-d2l-editor-default-img-style="true" style="max-width: 100%;"></p>
+<p></p>
+<p>Then, scroll all the way to the bottom and select <strong>Add environment property</strong></p>
+<p><img src="image_20250224070218842.png" width="963" height="242" style="display: block; margin-left: auto; margin-right: auto;"> <strong>Add all the key value pairs</strong> from your <code><strong>.env</strong></code> <strong>except for PORT</strong>.</p>
+<p><img src="image_20250224063221523.png" width="902" height="479" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Press <strong>NEXT</strong>, then <strong>SUBMIT</strong>, then wait until your application is deployed.</p>
+<p><img src="image_20250224063221638.png" width="832" height="401" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p><img src="image_20250224063221800.png" width="821" height="400" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Once it says <strong><span style="color: #4a8f00;">Environment successfully launched</span></strong>, you can <span style="color: #004489;"><strong>click the link in Domain</strong></span>, and <span style="color: #990006;"><strong>test your application</strong></span>.</p>
+<p>Make sure to <span style="color: #990006;"><strong>save (or bookmark) the link</strong></span> somewhere for your <span style="color: #990006;"><strong>Case Study 1 Demo</strong></span>.</p>
+<p><img src="image_20250224063221942.png" width="945" height="503" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<hr>
+<h3 style="text-align: center;">Logging</h3>
+<p>To get access to logs, find the <strong>Logs</strong>, request <strong>Full logs</strong>, and find the <code><strong>var/log/web.stdout</strong></code> file <strong>inside the zip</strong>.</p>
+<p>The "<strong>Last 100 lines</strong>" log will be a tail of <strong>all of the system logs together</strong>, and <strong>not just the server's</strong>.</p>
+<p><img src="image_20250224142425659.png" width="960" height="529" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p><img src="image_20250224142425777.png" width="960" height="548" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<hr>
+<h3 style="text-align: center;">Updating Your Build</h3>
+<p>To <strong>update the build</strong>, select the <strong>Application versions</strong> tab, and click <strong>Upload</strong>.</p>
+<p><img src="image_20250224143118935.png" data-d2l-editor-default-img-style="true" style="max-width: 100%;"></p>
+<p>Set a <strong>new version label</strong>, and <strong>upload</strong> your <strong>new build zip</strong> (make sure to <strong>re-build the client, re-copy, and re-zip</strong>)</p>
+<p><img src="image_20250224143119438.png" width="453" height="428" style="display: block; margin-left: auto; margin-right: auto;"></p>
+<p>Select the <strong>new version label</strong>, then under <strong>Actions</strong>, select <strong>Deploy</strong>&nbsp;</p>
+<p><img src="image_20250224143120181.png" width="1133" height="359"></p>
+<p></p>
+<p></p></body></html>
